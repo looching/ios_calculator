@@ -10,7 +10,7 @@
 
 @interface CalculatorBrain()
 
-@property (nonatomic, strong) NSMutableArray *operantStack;
+@property (nonatomic, strong) NSMutableArray *operandStack;
 @property (nonatomic, strong) NSMutableArray *operatorStack;
 
 @end
@@ -18,13 +18,13 @@
 
 @implementation CalculatorBrain
 
-@synthesize operantStack = _operantStack;
+@synthesize operandStack = _operandStack;
 @synthesize operatorStack = _operatorStack;
 
-- (NSMutableArray *)operantStack
+- (NSMutableArray *)operandStack
 {
-    if (_operantStack == nil) _operantStack = [[NSMutableArray alloc] init ];
-    return _operantStack;
+    if (_operandStack == nil) _operandStack = [[NSMutableArray alloc] init ];
+    return _operandStack;
 }
 
 - (NSMutableArray *)operatorStack
@@ -34,16 +34,16 @@
 }
 
 
-- (void)pushOperant:(double)operant
+- (void)pushOperand:(double)operand
 {
-    [self.operantStack addObject:[NSNumber numberWithDouble:operant]]; 
+    [self.operandStack addObject:[NSNumber numberWithDouble:operand]]; 
 } 
 
-- (double)popOperant
+- (double)popOperand
 {
-    NSNumber *operantObject = [self.operantStack lastObject];
-    if (self.operantStack) [self.operantStack removeLastObject];
-    return [operantObject doubleValue];
+    NSNumber *operandObject = [self.operandStack lastObject];
+    if (self.operandStack) [self.operandStack removeLastObject];
+    return [operandObject doubleValue];
 }
 
 - (void)pushOperator:(NSString *)operator
@@ -58,9 +58,37 @@
     return operator;
 }
 
-- (double)performOperation:(NSString *)operation
+- (double)performOperation
 {
     double result = 0;
+    NSString *operator = self.popOperator;
+
+    
+    while (operator) {
+        double operand_2 = self.popOperand;
+        double operand_1 = self.popOperand;
+        
+        NSLog(@"operand_1 = %g", operand_1);
+        NSLog(@"operand_2 = %g", operand_2);
+        NSLog(@"operator = %@", operator);
+        
+        if ([operator isEqualToString:@"+"]) {
+            result = operand_1 + operand_2;
+            operator = self.popOperator;
+        } else if ([operator isEqualToString:@"-"]) {
+            result = operand_1 - operand_2;
+            operator = self.popOperator;
+        } else if ([operator isEqualToString:@"×"]) {
+            result = operand_1 * operand_2;
+            operator = self.popOperator;
+        } else if ([operator isEqualToString:@"/"]) {
+            if (operand_2) {
+                result = operand_1 / operand_2;
+                operator = self.popOperator;
+            }
+        }
+    }
+    
     return result;
 }
 

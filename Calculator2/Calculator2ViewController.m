@@ -12,7 +12,7 @@
 @interface  Calculator2ViewController()
 @property (nonatomic) BOOL userIsInTheMiddleOfEnteringANumber;
 @property (nonatomic, strong) CalculatorBrain *brain;
-@property (nonatomic) int operatorCount;
+//@property (nonatomic) int operatorCount;
 @end
 
 @implementation Calculator2ViewController
@@ -21,13 +21,12 @@
 @synthesize display = _display;
 @synthesize userIsInTheMiddleOfEnteringANumber = _userIsInTheMiddleOfEnteringANumber;
 @synthesize brain = _brain;
-@synthesize operatorCount = _operatorCount;
+//@synthesize operatorCount = _operatorCount;
 
-- (int)operatorCount
+- (CalculatorBrain *)brain
 {
-    if (_operatorCount) {
-        _operatorCount = 1;
-    }
+    if (!_brain) _brain = [[CalculatorBrain alloc] init];
+    return _brain;
 }
 
 
@@ -36,7 +35,7 @@
     NSString *digit = sender.currentTitle;
     if (self.userIsInTheMiddleOfEnteringANumber) {
         [self.display setText:[self.display.text stringByAppendingString:digit]];
-    } else if ([[sender currentTitle] isEqualToString:@"0"]){
+    } else if ([[sender currentTitle] isEqualToString:@"0"]) {
         self.userIsInTheMiddleOfEnteringANumber = NO;
     } else {
         self.display.text = digit;
@@ -44,39 +43,55 @@
     }
 }
 
-- (IBAction)operationPressed:(UIButton *)sender 
+- (IBAction)operatorPressed:(UIButton *)sender 
 {
-    double operant = [self.display.text doubleValue];
-    [self.brain pushOperant:operant];
+    //NSLog(@"self.display.text = %@", self.display.text);
+    //double operant = [self.display.text doubleValue];
+    //NSLog(@"operant = %g", operant);
+    [self.brain pushOperand:[self.display.text doubleValue]];
     [self.brain pushOperator:sender.currentTitle];
     self.display.text = sender.currentTitle;
-    self.operatorCount += 1;
+    //NSLog(@"top of operang stack = %g", self.brain.popOperant);
+    //NSLog(@"top of operator stack = %@", self.brain.popOperator);
+
+    //self.operatorCount += 1;
+    self.userIsInTheMiddleOfEnteringANumber = NO;
 }
 
 - (IBAction)equalPressed 
 {
+    //double result;
+    //[self.brain pushOperand:[self.display.text doubleValue]];
+    //NSLog(@"operator count1 = %g", self.operatorCount);
 
-    double operant_1 = self.brain.popOperant;
-    NSString *operator = self.brain.popOperator;
-    self.operatorCount -= 1;
-    double operant_2 = self.brain.popOperant;
-    double result;
-    
-    while (self.operatorCount > 0) {
+    /*while (self.operatorCount > 0) {
+        NSLog(@"operator count = %g", self.operatorCount);
+        double operant_1 = self.brain.popOperant;
+        NSString *operator = self.brain.popOperator;
+        self.operatorCount -= 1;
+        double operant_2 = self.brain.popOperant;
+        
         if ([operator isEqualToString:@"+"]) {
             result = operant_1 + operant_2;
         } else if ([operator isEqualToString:@"-"]) {
             result = operant_1 - operant_2;
         } else if ([operator isEqualToString:@"×"]) {
             result = operant_1 * operant_2;
-        } else if ([operator isEqualToString:@"÷"]) {
+        } else if ([operator isEqualToString:@"/"]) {
             if (operant_2) {
                 result = operant_1 / operant_2;
             }
         }
     
-    [self.brain pushOperant:result];
-    }
+        [self.brain pushOperand:result];
+    }*/
+    
+    [self.brain pushOperand:[self.display.text doubleValue]];
+    double result = self.brain.performOperation;
+    NSString *resultString = [NSString stringWithFormat:@"%g", result];
+    self.display.text = resultString; 
+    
+    self.userIsInTheMiddleOfEnteringANumber = NO;
 }
 
 - (IBAction)cancelPressed:(id)sender 
