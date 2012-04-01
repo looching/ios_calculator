@@ -33,6 +33,7 @@
 - (IBAction)digitPressed:(UIButton *)sender 
 {
     NSString *digit = sender.currentTitle;
+    //int dotCount = 0;
     if (self.userIsInTheMiddleOfEnteringANumber) {
         [self.display setText:[self.display.text stringByAppendingString:digit]];
     } else if ([[sender currentTitle] isEqualToString:@"0"]) {
@@ -40,7 +41,7 @@
     } else {
         self.display.text = digit;
         self.userIsInTheMiddleOfEnteringANumber = YES;
-    }
+    } 
 }
 
 - (IBAction)operatorPressed:(UIButton *)sender 
