@@ -30,6 +30,7 @@
 }
 
 
+
 - (IBAction)digitPressed:(UIButton *)sender 
 {
     NSString *digit = sender.currentTitle;
@@ -51,7 +52,11 @@
     //NSLog(@"operant = %g", operant);
     [self.brain pushOperand:[self.display.text doubleValue]];
     [self.brain pushOperator:sender.currentTitle];
-    self.display.text = sender.currentTitle;
+    //[self.brain pushFormula:self.display.text];
+    //[self.brain pushFormula:sender.currentTitle];
+    if (self.userIsInTheMiddleOfEnteringANumber) {
+        self.display.text = sender.currentTitle;
+    }
     //NSLog(@"top of operang stack = %g", self.brain.popOperant);
     //NSLog(@"top of operator stack = %@", self.brain.popOperator);
 
@@ -88,8 +93,11 @@
     }*/
     
     [self.brain pushOperand:[self.display.text doubleValue]];
-    double result = self.brain.performOperation;
+    [self.brain pushFormula]; 
+    //double result = self.brain.performOperation;
+    double result = self.brain.calculateTheFormula;
     NSString *resultString = [NSString stringWithFormat:@"%g", result];
+    
     self.display.text = resultString; 
     
     self.userIsInTheMiddleOfEnteringANumber = NO;

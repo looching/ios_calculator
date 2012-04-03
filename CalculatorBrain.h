@@ -15,5 +15,8 @@
 - (double)popOperand;
 - (NSString *)popOperator;
 - (double)performOperation;
+- (void)pushFormula;
+- (double)calculateTheFormula;
+- (NSMutableArray *)getDisplayContent;
 
 @end
